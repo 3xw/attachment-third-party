@@ -30,6 +30,9 @@ class YoutubeMover extends BaseMover
   public function __construct($config = [])
   {
     parent::__construct($config);
+
+    if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
+
     $this->_client = new Client($this->getConfig('client'));
     $this->_client->setScopes('https://www.googleapis.com/auth/youtube');
     $this->_service = new Google_Service_YouTube($this->_client);
