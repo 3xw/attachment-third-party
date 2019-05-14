@@ -31,6 +31,7 @@ class YoutubeMover extends BaseMover
   {
     parent::__construct($config);
 
+    // see https://developers.google.com/gmail/api/quickstart/php
     if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
 
     $this->_client = new Client($this->getConfig('client'));
