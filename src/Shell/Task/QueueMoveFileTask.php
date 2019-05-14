@@ -15,9 +15,9 @@ class QueueMoveFileTask extends QueueTask
   public function run(array $data, $id)
   {
     $attachment = $data['attachment'];
-    $handlerClass = $data['handler'];
+    $moverClass = $data['mover'];
     $config = $data['config'];
 
-    $handler = new $handlerClass($attachment, $config);
+    $handler = new $moverClass($attachment, $config);
   }
 }
