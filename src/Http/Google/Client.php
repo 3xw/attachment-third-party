@@ -10,13 +10,17 @@ class Client extends Google_Client
 
   protected $_defaultConfig = [];
 
+  // for cli usage ( create and download a OAuth Client type Other )
+  const CREDENTIALS_PATH = CONFIG.'google'.DS.'credentials.json';
+  const TOKEN_PATH = CONFIG.'google'.DS.'token.json';
+
   public function __construct($config = [])
   {
     $this->setConfig($config);
     parent::__construct($this->getConfig());
   }
 
-  public function enableForCliWithOAuthClient($credentials, $token, $scopes)
+  public function enableCliOAuth($scopes, $credentials = self::CREDENTIALS_PATH, $token = self::TOKEN_PATH)
   {
     if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
 

@@ -3,6 +3,7 @@ namespace Attachment\ThirdParty\Shell;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Attachment\Fly\Profile;
 
 class MoveFileShell extends Shell
 {
@@ -10,6 +11,7 @@ class MoveFileShell extends Shell
   {
     $this->loadModel('Attachment.Attachments');
     $attachments = $this->Attachments->find()
+    ->contain(['Atags'])
     ->where([
       'type' => 'transit'
     ])

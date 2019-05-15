@@ -17,6 +17,6 @@ class BaseMover
 
   public function move(Attachment $attachment, $progressCb = null, $successCb = null, $errorCb = null)
   {
-
+    return $this;
   }
 }
