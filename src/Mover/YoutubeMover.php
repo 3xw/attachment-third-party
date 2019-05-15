@@ -6,22 +6,16 @@ use Attachment\ThirdParty\Http\Google\Client;
 use Google_Service_YouTube;
 
 // composer require google/apiclient:^2.0
+// + create and download a OAuth Client type Other
 
 class YoutubeMover extends BaseMover
 {
   protected $_defaultConfig = [
     'client' => [
-
-      // https://developers.google.com/console
-      'client_id' => '',
-      'client_secret' => '',
-      'redirect_uri' => null,
-      'state' => null,
-
-      // Simple API access key, also from the API console. Ensure you get
-      // a Server key, and not a Browser key.
-      'developer_key' => '',
-    ]
+      'application_name' => 'Attachment\ThirdParty\Mover\YoutubeMover',
+    ],
+    'credentials' => CONFIG.'google'.DS.'credentials.json',
+    'token' => CONFIG.'google'.DS.'token.json'
   ];
 
   protected $_client;
@@ -30,16 +24,17 @@ class YoutubeMover extends BaseMover
   public function __construct($config = [])
   {
     parent::__construct($config);
-
-    // see https://developers.google.com/gmail/api/quickstart/php
-    if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
-
-    $this->_client = new Client($this->getConfig('client'));
-    $this->_client->setScopes('https://www.googleapis.com/auth/youtube');
-    $this->_service = new Google_Service_YouTube($this->_client);
-
-    $this->_client->prepareScopes();
-    debug($this->_client->getAccessToken());
+    $this->_client = (new Client($this->getConfig('client')))
+    ->enableForCliWithOAuthClient(
+      $this->getConfig('credentials'),
+      $this->getConfig('token'),
+      [
+        Google_Service_YouTube::YOUTUBE,
+        Google_Service_YouTube::YOUTUBE_FORCE_SSL,
+        Google_Service_YouTube::YOUTUBE_READONLY,
+        Google_Service_YouTube::YOUTUBE_UPLOAD
+      ]
+    );
   }
 
   public function move(Attachment $attachment, $progressCb = null, $successCb = null, $errorCb = null)

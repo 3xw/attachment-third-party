@@ -17,15 +17,7 @@ class MoveFileShell extends Shell
     ->toArray();
 
     $class = 'Attachment\ThirdParty\Mover\YoutubeMover';
-    $mover = new $class([
-      'client' => [
-        'client_id' => Configure::read('Api.Google.client.id'),
-        'client_secret' => Configure::read('Api.Google.client.secret'),
-        'developer_key' => Configure::read('Api.Google.key'),
-        'redirect_uri' => null,
-        'state' => null,
-      ]
-    ]);
+    $mover = new $class();
 
     foreach($attachments as $attachment)
     {
