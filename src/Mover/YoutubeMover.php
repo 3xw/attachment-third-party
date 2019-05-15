@@ -74,16 +74,20 @@ class YoutubeMover extends BaseMover
   {
     // upload
     try {
-      $this->_upload($attachment, $progressCb);
+      $status = $this->_upload($attachment, $progressCb);
     }
     catch (\Exception $e)
     {
       // catch error
-      if($errorCb) $errorCb($attachment, $e);
+      if($errorCb) $errorCb($attachment, $status, $e);
       else throw new \Exception($e->getMessage());
     }
 
     // success
+    $this->attachment->set('type', 'embed');
+    $this->attachment->set('subtype', 'video');
+    $this->attachment->set('profile', '');
+    $this->attachment->set('embed', '<embed width="100%" height="100%" src="https://www.youtube.com/embed/'.$status['id'].'"></embed>');
     if($successCb) $successCb($attachment);
 
     return $this;
@@ -108,8 +112,10 @@ class YoutubeMover extends BaseMover
       $chunk = fread($handle, $this->getConfig('chunkSize'));
       $status = $media->nextChunk($chunk);
       $uploadedBytes += $this->getConfig('chunkSize');
-      if($progressCb) $progressCb($attachment, $size, $uploadedBytes);
+      if($progressCb) $progressCb($attachment, $size, $uploadedBytes, $this->getConfig('chunkSize'));
     }
     $this->client->setDefer(false);
+
+    return $status;
   }
 }
