@@ -5,16 +5,21 @@ use Queue\Shell\Task\QueueTask;
 
 class QueueMoveFileTask extends QueueTask
 {
-  public $neededData = [
-    'attachment',
-    'mover'
-  ];
+  public $neededData = ['attachment','mover'];
 
   public $progress;
 
   public $success = false;
 
   public $attachment;
+
+  public $Attachments;
+
+  public function initialize()
+  {
+    parent::initialize();
+    $this->Attachments = $this->loadModel('Attachment.Attachments');
+  }
 
   public function add()
   {
@@ -25,7 +30,7 @@ class QueueMoveFileTask extends QueueTask
   public function run(array $data, $id)
   {
     // controll
-    foreach($this->$neededData as $needed) if(empty($data[$needed])) throw new \Exception("QueueMoveFileTask: Missing task data: ".$needed);
+    foreach($this->neededData as $needed) if(empty($data[$needed])) throw new \Exception("QueueMoveFileTask: Missing task data: ".$needed);
 
     // setup
     $this->attachment = $data['attachment'];
@@ -61,10 +66,8 @@ class QueueMoveFileTask extends QueueTask
     $this->success = true;
   }
 
-  public function errorHandler($attachment, $message)
+  public function errorHandler($attachment, $status, $error)
   {
-    $this->out('');
-    $this->failureMessage = 'error occured : '.$attachment->name.' '.$message;
-    $this->err($this->failureMessage);
+    throw $error;
   }
 }

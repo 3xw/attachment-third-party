@@ -73,6 +73,7 @@ class YoutubeMover extends BaseMover
   public function move(Attachment $attachment, $progressCb = null, $successCb = null, $errorCb = null)
   {
     // upload
+    $status = false;
     try {
       $status = $this->_upload($attachment, $progressCb);
     }
@@ -84,11 +85,10 @@ class YoutubeMover extends BaseMover
     }
 
     // success
-    $this->attachment->set('type', 'embed');
-    $this->attachment->set('subtype', 'video');
-    $this->attachment->set('profile', '');
-    $this->attachment->set('embed', '<embed width="100%" height="100%" src="https://www.youtube.com/embed/'.$status['id'].'"></embed>');
     if($successCb) $successCb($attachment);
+
+    // set embed in file
+    $attachment->set('mover', $status);
 
     return $this;
   }
